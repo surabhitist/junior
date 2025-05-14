@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Participants List</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Live Results - Junior group</h1>
+      <ul id="participantsList" class="participants-list"></ul>
+    </div>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+      import {
+        getFirestore,
+        collection,
+        query,
+        orderBy,
+        onSnapshot,
+      } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyBWBDr4Cm5Shck--5a6DCejWpNpyx8qBDc",
+        authDomain: "junior-6cae9.firebaseapp.com",
+        projectId: "junior-6cae9",
+        storageBucket: "junior-6cae9.firebasestorage.app",
+        messagingSenderId: "609584196075",
+        appId: "1:609584196075:web:af35f882e20d59f84591ae",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      const participantsRef = collection(db, "contestants");
+      const q = query(participantsRef, orderBy("mark", "desc"));
+
+      const listElement = document.getElementById("participantsList");
+
+      onSnapshot(q, (snapshot) => {
+        listElement.innerHTML = "";
+        let rank = 1;
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          const li = document.createElement("li");
+          li.innerHTML = `
+            <div class="card">
+              <div class="rank">Rank ${rank}</div>
+              <h2>${data.name}</h2>
+              <p>Mark: ${data.mark}</p>
+            </div>
+          `;
+          listElement.appendChild(li);
+          rank++;
+        });
+      });
+    </script>
+  </body>
+</html>
